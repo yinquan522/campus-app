@@ -1,22 +1,50 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>校园帮</title>
+<style>
+  body { font-family: sans-serif; padding: 20px; background: #f5f5f5; }
+  h1 { color: #333; }
+  .card { background: #fff; padding: 15px; border-radius: 8px; margin-top: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+  .success { color: green; font-weight: bold; }
+  .error { color: red; font-weight: bold; word-break: break-all; }
+  button { margin-top: 10px; padding: 10px; width: 100%; background: #007bff; color: #fff; border: none; border-radius: 5px; font-size: 16px; }
+</style>
 </head>
 <body>
-<h1>校园帮</h1>
-<div id="x">加载中...</div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <h1>校园帮</h1>
+  <div id="status">正在连接数据库，请稍候...</div>
+  <div class="card" id="data-box" style="display:none;">
+    <div id="data-content"></div>
+    <button onclick="location.reload()">刷新数据</button>
+  </div>
+
 <script>
-const s = supabase.createClient(
-  'https://smsniffyxdslblckxhf.supabase.co',
-  'sb_publishable_X99bEytfb0AapCAalqq99Q_JlrB_ypv'
-)
-s.from('schools').select().then(r=>{
-  document.getElementById('x').innerText = r.error ? r.error.message : JSON.stringify(r.data)
-})
+  // 你的 Supabase 真实配置
+  const SUPABASE_URL = 'https://smsniffyxdslblckxhf.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_X99bEytfb0AapCAalqq99Q_JlrB_ypv';
+  
+  const apiUrl = `${SUPABASE_URL}/rest/v1/schools?select=*`;
+  const headers = {
+    'apikey': SUPABASE_KEY,
+    'Authorization': `Bearer ${SUPABASE_KEY}`
+  };
+
+  fetch(apiUrl, { headers })
+    .then(res => {
+      if (!res.ok) throw new Error(`网络错误 ${res.status}：${res.statusText}`);
+      return res.json();
+    })
+    .then(data => {
+      document.getElementById('status').innerHTML = '<span class="success">✅ 连接成功！</span>';
+      document.getElementById('data-box').style.display = 'block';
+      document.getElementById('data-content').innerText = JSON.stringify(data, null, 2);
+    })
+    .catch(err => {
+      document.getElementById('status').innerHTML = '<span class="error">❌ 连接失败：' + err.message + '<br><br>请检查 Supabase 表(schools)是否建好，以及 RLS 权限是否开启 SELECT。</span>';
+    });
 </script>
 </body>
 </html>
-
