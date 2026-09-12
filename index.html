@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>校园帮</title>
+    <style>
+        body { font-family: 微软雅黑; text-align: center; padding: 40px; background: #f5f5f5; }
+        h1 { color: #333; }
+        .card { border: 1px solid #ddd; margin: 12px; padding: 16px; border-radius: 12px; background: white; cursor: pointer; font-size: 18px; }
+        .card:hover { background: #e8f5e9; }
+    </style>
+</head>
+<body>
+    <h1>🏫 校园帮</h1>
+    <p>选择你的学校</p >
+    <div id="schoolList">加载中...</div>
+
+    <script>
+        const SUPABASE_URL = "https://smsniffyxdslsblckxhf.supabase.co";
+        const SUPABASE_KEY = "把这里换成你的sb_publishable_那串密钥";
+
+        async function loadSchools() {
+            const res = await fetch(SUPABASE_URL + "/rest/v1/schools?select=*", {
+                headers: { "apikey": SUPABASE_KEY }
+            });
+            const schools = await res.json();
+            document.getElementById("schoolList").innerHTML = schools.map(s =>
+                '<div class="card" onclick="alert(\'你选了：' + s.name + '\')">' + s.name + '</div>'
+            ).join("");
+        }
+        loadSchools();
+    </script>
+</body>
+</html>
