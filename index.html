@@ -1,37 +1,39 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>校园帮</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    body { font-family: sans-serif; padding: 20px; background: #f5f5f5; }
-    h1 { text-align: center; color: #333; }
-    .school { background: white; padding: 15px; margin: 10px 0; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>校园帮</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+body{font-family:sans-serif;padding:20px;background:#f5f5f5}
+h1{text-align:center}
+.card{background:#fff;padding:14px;margin:10px 0;border-radius:8px}
+</style>
 </head>
 <body>
-  <h1>校园帮</h1>
-  <div id="list">加载中...</div>
+<h1>校园帮</h1>
+<div id="app">加载中...</div>
 sb_publishable_X99bEytfb0AapCAaIqq99Q_JlrB_ypv
-  <script>
-    const supabaseUrl = 'https://smsniffyxdslblckxhf.supabase.co'
-    const supabaseKey = '【在这里粘贴你真实的sb_publishable_密钥】'
-    const supabase = supabase.createClient(supabaseUrl, supabaseKey)
+<script>
+const supabaseUrl = 'https://smsniffyxdslblckxhf.supabase.co'
+const supabaseKey = 'sb_publishable_XXXX'   // ← 换成你真实的公钥
+const supabase = supabase.createClient(supabaseUrl, supabaseKey)
 
-    async function loadSchools() {
-      const { data, error } = await supabase.from('schools').select('*')
-      if (error) { document.getElementById('list').innerText = '出错了'; return }
-      document.getElementById('list').innerHTML = ''
-      data.forEach(s => {
-        const div = document.createElement('div')
-        div.className = 'school'
-        div.innerText = s.name
-        document.getElementById('list').appendChild(div)
-      })
-    }
-    loadSchools()
-  </script>
+async function start(){
+  const { data, error } = await supabase.from('schools').select('*')
+  const box = document.getElementById('app')
+  if(error){ box.innerText = '出错：' + error.message; return }
+  if(!data || data.length === 0){ box.innerText = '数据库里没有学校'; return }
+  box.innerHTML = ''
+  data.forEach(row=>{
+    const d = document.createElement('div')
+    d.className = 'card'
+    d.innerText = row.name
+    box.appendChild(d)
+  })
+}
+start()
+</script>
 </body>
 </html>
