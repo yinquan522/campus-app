@@ -1,35 +1,38 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>校园帮</title>
-    <style>
-        body { font-family: 微软雅黑; text-align: center; padding: 40px; background: #f5f5f5; }
-        h1 { color: #333; }
-        .card { border: 1px solid #ddd; margin: 12px; padding: 16px; border-radius: 12px; background: white; cursor: pointer; font-size: 18px; }
-        .card:hover { background: #e8f5e9; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>校园帮</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body { font-family: sans-serif; padding: 20px; background: #f5f5f5; }
+    h1 { text-align: center; color: #333; }
+    .school { background: white; padding: 15px; margin: 10px 0; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+  </style>
 </head>
 <body>
-    <h1>🏫 校园帮</h1>
-    <p>选择你的学校</p >
-    <div id="schoolList">加载中...</div>
+  <h1>校园帮</h1>
+  <div id="list">加载中...</div>
+sb_publishable_X99bEytfb0AapCAaIqq99Q_JlrB_ypv
+  <script>
+    const supabaseUrl = 'https://smsniffyxdslblckxhf.supabase.co'
+    const supabaseKey = '这里粘贴你的sb_publishable_那串密钥'
+    const supabase = supabase.createClient(supabaseUrl, supabaseKey)
 
-    <script>
-        const SUPABASE_URL = "https://smsniffyxdslsblckxhf.supabase.co";
-        const SUPABASE_KEY = "把这里换成你的sb_publishable_那串密钥";
-
-        async function loadSchools() {
-            const res = await fetch(SUPABASE_URL + "/rest/v1/schools?select=*", {
-                headers: { "apikey": SUPABASE_KEY }
-            });
-            const schools = await res.json();
-            document.getElementById("schoolList").innerHTML = schools.map(s =>
-                '<div class="card" onclick="alert(\'你选了：' + s.name + '\')">' + s.name + '</div>'
-            ).join("");
-        }
-        loadSchools();
-    </script>
+    async function loadSchools() {
+      const { data, error } = await supabase.from('schools').select('*')
+      if (error) { document.getElementById('list').innerText = '出错了'; return }
+      document.getElementById('list').innerHTML = ''
+      data.forEach(s => {
+        const div = document.createElement('div')
+        div.className = 'school'
+        div.innerText = s.name
+        document.getElementById('list').appendChild(div)
+      })
+    }
+    loadSchools()
+  </script>
 </body>
 </html>
+
